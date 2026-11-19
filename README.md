@@ -42,16 +42,6 @@ Fuente: [hoja de datos ADF4351](https://www.analog.com/media/en/technical-docume
 - Repositorio: https://github.com/vicentebaena/CC_3GITT
 - Aplicación: https://vicentebaena.github.io/CC_3GITT/
 
-GitHub Pages publica desde la raíz de la rama `main`. Para actualizar la aplicación, guardar los cambios en Git y subirlos:
-
-```sh
-git add .
-git commit -m "Describe el cambio"
-git push
-```
-
-GitHub Pages despliega los cambios automáticamente tras la subida.
-
 ## Licencia
 
 Código MIT. Textos, diagramas y contenido docente CC BY 4.0. Véase LICENSE.md.
