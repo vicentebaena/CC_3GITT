@@ -52,6 +52,18 @@ La entrada compleja tiene amplitud de símbolo unitaria. AWGN circular tiene var
 
 Las métricas de fase y frecuencia usan el último cuarto. El error de fase RMS se calcula módulo 180 grados, por lo que debe interpretarse junto con la BER para identificar inversiones. Las BER son cocientes medidos en esta ventana, no predicciones teóricas; si no hay datos tras los 64 símbolos de piloto, no se informa BER. Pruebas: `node tests/costas-model.test.cjs`.
 
+## Recuperación de reloj BPSK: Gardner
+
+Cuarta pestaña, también accesible con `#clock`, con los dos idiomas. La portadora se supone recuperada. Ofrece diagrama, ojo con instantes de muestreo, señal filtrada/decisiones y adquisición temporal. La ventana temporal se conserva al modificar los parámetros y las escalas de ojo y muestreo son fijas.
+
+Controles: tasa de símbolos, desfase temporal en fracciones de T, error del período libre en ppm, roll-off RRC, patrón de bits, frecuencia natural, amortiguamiento y AWGN (E_b/N_0 = 30 dB por defecto). Ejemplos de adquisición, lazo lento con deriva y ausencia de transiciones. El caso constante muestra que BER cero no garantiza recuperación del reloj.
+
+El transmisor usa RRC de energía unitaria, 8 símbolos de extensión y 16 muestras/símbolo; la recepción aplica el RRC adaptado. Se retiran los retardos de grupo y se añaden símbolos de guarda. El ruido real tiene varianza N_0/2 antes del filtro receptor; tras éste, las muestras de ruido quedan correlacionadas. La cascada finita de filtros aproxima un pulso Nyquist de coseno alzado.
+
+Gardner usa las muestras en t_(k-1), (t_(k-1)+t_k)/2 y t_k: e_k = y_mid*(y_prev-y_current). Su ganancia se normaliza con la pendiente media del pulso seleccionado. El PI utiliza Kp = 2*zeta*2*pi*f_n/R_s y Ki = (2*pi*f_n/R_s)^2. El error normalizado se limita a +/-1 y el período estimado a [0.98,1.02] T; f_n se limita a R_s/100. La interpolación es lineal. El tiempo ideal y los bits transmitidos se usan sólo para gráficos y métricas, nunca para dirigir el lazo.
+
+Las métricas temporales usan el último cuarto; BER compara la segunda mitad con los índices de bits originales. El ojo se pliega módulo T y no identifica desplazamientos enteros de símbolo. No se simula sincronización de trama ni corrección de polaridad. Las fluctuaciones dependientes de los datos existen incluso sin AWGN. Pruebas: `node tests/clock-model.test.cjs`.
+
 ## Modelo y límites del sintetizador
 
 Modelo lineal promediado, de segundo orden y tipo 2, con filtro PI ideal. La simulación integra mediante RK4 el error de fase en el PFD y el estado integral. Se conserva una fase incremental para evitar muestrear la portadora RF. Se reajustan las ganancias del filtro al modificar N, K_VCO, f_n o zeta para conservar la dinámica seleccionada.
@@ -76,7 +88,9 @@ Fuente: [hoja de datos ADF4351](https://www.analog.com/media/en/technical-docume
 - `app/fm-main.js`: controles y gráficos de FM.
 - `app/costas-model.js`: modelo discreto del lazo de Costas BPSK.
 - `app/costas-main.js`: controles y gráficos de recuperación de portadora.
-- `app/labs.js`: navegación entre los tres laboratorios.
+- `app/clock-model.js`: filtros RRC, ruido y recuperación temporal Gardner.
+- `app/clock-main.js`: controles y gráficos de recuperación de reloj.
+- `app/labs.js`: navegación entre los cuatro laboratorios.
 - `app/i18n.js` y `app/translations.js`: selector y catálogo ES/EN sin servicios externos.
 - `tests/model.test.cjs`: comprobaciones del modelo (`node tests/model.test.cjs`).
 
