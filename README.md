@@ -36,22 +36,20 @@ Fuente: [hoja de datos ADF4351](https://www.analog.com/media/en/technical-docume
 - `app/main.js`: gráficos e interacción.
 - `tests/model.test.cjs`: comprobaciones del modelo (`node tests/model.test.cjs`).
 
-## Publicación en GitHub Pages
+## GitHub y aplicación publicada
 
-El repositorio de GitHub debe crearse primero, vacío, con nombre `CC_3GITT`. No añadir README ni licencia desde GitHub, ya incluidos aquí.
+- Repositorio: https://github.com/vicentebaena/CC_3GITT
+- Aplicación: https://vicentebaena.github.io/CC_3GITT/
 
-Después de crear el repositorio, conectar y subir el repositorio local:
+GitHub Pages publica desde la raíz de la rama `main`. Para actualizar la aplicación, guardar los cambios en Git y subirlos:
 
 ```sh
-git remote add origin https://github.com/vicentebaena/CC_3GITT.git
-git push -u origin main
+git add .
+git commit -m "Describe el cambio"
+git push
 ```
 
-En GitHub: Settings → Pages → Deploy from a branch → main → / (root) → Save. La dirección prevista, una vez habilitado Pages, es https://vicentebaena.github.io/CC_3GITT/.
-
-Alternativamente, con GitHub CLI autenticada se puede crear y subir con `gh repo create vicentebaena/CC_3GITT --public --source=. --remote=origin --push`.
-
-El proyecto no configura un remoto ni crea un repositorio en GitHub automáticamente.
+GitHub Pages despliega los cambios automáticamente tras la subida.
 
 ## Licencia
 
