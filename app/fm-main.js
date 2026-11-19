@@ -2,7 +2,7 @@
 (function(){
 'use strict';
 const byId=id=>document.getElementById(id),canvas=byId('fmPlot'),ctx=canvas.getContext('2d');
-const palette={text:'#eef8f6',muted:'#a7bbb7',grid:'#c7e7e222',cyan:'#48d6c8',lime:'#c8f560',demodulated:'#31966b',amber:'#ffc857',coral:'#ff6b5f',blue:'#7cb7ff'};
+const palette={text:'#eef8f6',muted:'#a7bbb7',grid:'#c7e7e222',cyan:'#48d6c8',lime:'#c8f560',demodulated:'#48d6c8',amber:'#ffc857',coral:'#ff6b5f',blue:'#7cb7ff'};
 const ids={carrier:'fmCarrier',message:'fmMessage',deviation:'fmDeviation',offset:'fmOffset',fn:'fmFn',zeta:'fmZeta',type:'fmType',wave:'fmWave',noise:'fmNoise',snr:'fmSnr',kvco:'fmKvco',phase:'fmPhase',duration:'fmDuration'};
 let params={...FM.defaults},result=FM.simulate(params),view='message';
 const help={
@@ -24,7 +24,7 @@ const help={
 const descriptions={
  diagram:['El PLL como demodulador','La salida útil está en la tensión de control, antes del VCO.','De fase a frecuencia y a tensión','El detector compara fases; el filtro y el VCO cierran el lazo. Cuando el VCO sigue la frecuencia instantánea, v꜀ contiene el desajuste de continua y el mensaje escalado.','v꜀(t) ≈ [fportadora − fVCO,libre + Δf·m(t)] / Kᵥ꜀ₒ','Añade desajuste de portadora y observa la componente continua de la tensión en la vista Lazo.'],
  message:['Mensaje original y recuperado','Escala fija de −1,2 a +1,2. Señal deseada discontinua sobre la demodulada, sin corregir ganancia ni retardo.','Seguir el mensaje sin dejar pasar todo el ruido','El mensaje recuperado se obtiene de la tensión de control. Se retira el desajuste de continua conocido y se escala por Kᵥ꜀ₒ/Δf. El error incluye retardo, deformación y ruido.','m̂(t) = [Kᵥ꜀ₒ·v꜀(t) − Δf₀] / Δf','Reduce la rapidez del lazo manteniendo el mensaje: observa cómo aumenta el retardo o se deforma la salida. Compara con y sin ruido, y después un lazo ancho con uno estrecho.'],
- frequency:['Seguimiento de frecuencia instantánea','Entrada y VCO, referidos a la frecuencia libre del VCO.','La tensión de control ajusta la frecuencia','En esta gráfica se resta a ambas señales la frecuencia libre del VCO. Si se superponen, el VCO está siguiendo la modulación. Un error de fase constante también permite seguir una frecuencia constante.','fentrada(t) − fVCO,libre = Δf₀ + Δf·m(t)','Sube la desviación y baja fₙ. ¿En qué zonas de la modulación deja de seguir el VCO a la entrada?'],
+ frequency:['Seguimiento de frecuencia instantánea','Entrada ideal discontinua sobre el VCO, con escala fijada por la desviación de entrada y referida al VCO libre.','La tensión de control ajusta la frecuencia','En esta gráfica se resta a ambas señales la frecuencia libre del VCO. Si se superponen, el VCO está siguiendo la modulación. Un error de fase constante también permite seguir una frecuencia constante.','fentrada(t) − fVCO,libre = Δf₀ + Δf·m(t)','Sube la desviación y baja fₙ. ¿En qué zonas de la modulación deja de seguir el VCO a la entrada?'],
  loop:['Qué ocurre dentro del lazo','Error de fase, salida del detector y tensión de control.','La no linealidad del detector limita el seguimiento','El detector entrega sin(φₑ). Cerca de cero es aproximadamente lineal; a errores grandes ya no aumenta proporcionalmente y pueden aparecer deslizamientos de ciclo. El filtro PI conserva el ajuste de frecuencia.','Detector: d(t) = sin[φₑ(t) + ruido de fase de entrada]','Compara los tipos 1 y 2 con desajuste de portadora. Observa el error medio de fase y la tensión continua necesaria para compensarlo.']
 };
 function text(s,x,y,color='text',size=18,align='left'){ctx.fillStyle=palette[color];ctx.font=`${size}px system-ui,sans-serif`;ctx.textAlign=align;ctx.fillText(s,x,y);}
@@ -58,7 +58,7 @@ function draw(){if(view==='diagram'){drawDiagram();return;}
   plotRow(485,155,'Error de recuperación: m̂ − m',[{get:s=>s.recovered-s.message,color:'coral'}]);
   text('Escala fija del mensaje: los picos fuera de rango se aprecian en la gráfica de error',110,712,'muted',17);
  }else if(view==='frequency'){
-  plotRow(70,295,'Desviación respecto al VCO libre (kHz)',[{get:s=>s.input,color:'muted'},{get:s=>s.vco,color:'cyan'}]);legend([['Entrada FM','muted'],['VCO','cyan']],420);
+  plotRow(70,295,'Desviación respecto al VCO libre (kHz)',[{get:s=>s.vco,color:'cyan'},{get:s=>s.input,color:'text',dash:[10,7],width:2.8,halo:true}],{fixedRange:[params.offset-1.2*params.deviation,params.offset+1.2*params.deviation]});legend([['Entrada FM (ideal)','text',[10,7]],['VCO','cyan']],420);
   plotRow(485,155,'Error de seguimiento: fentrada − fVCO (kHz)',[{get:s=>s.input-s.vco,color:'coral'}]);
  }else{
   plotRow(60,140,'Error de fase entrada − VCO (rad)',[{get:s=>s.e,color:'cyan'}]);
