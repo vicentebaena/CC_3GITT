@@ -23,7 +23,7 @@ const help={
 };
 const descriptions={
  diagram:['El PLL como demodulador','La salida útil está en la tensión de control, antes del VCO.','De fase a frecuencia y a tensión','El detector compara fases; el filtro y el VCO cierran el lazo. Cuando el VCO sigue la frecuencia instantánea, v꜀ contiene el desajuste de continua y el mensaje escalado.','v꜀(t) ≈ [fportadora − fVCO,libre + Δf·m(t)] / Kᵥ꜀ₒ','Añade desajuste de portadora y observa la componente continua de la tensión en la vista Lazo.'],
- message:['Mensaje original y recuperado','Comparación con la misma escala de amplitud y sin corregir ganancia ni retardo.','Seguir el mensaje sin dejar pasar todo el ruido','El mensaje recuperado se obtiene de la tensión de control. Se retira el desajuste de continua conocido y se escala por Kᵥ꜀ₒ/Δf. El error incluye retardo, deformación y ruido.','m̂(t) = [Kᵥ꜀ₒ·v꜀(t) − Δf₀] / Δf','Reduce la rapidez del lazo manteniendo el mensaje: observa cómo aumenta el retardo o se deforma la salida. Después activa ruido y compara un lazo ancho con uno estrecho.'],
+ message:['Mensaje original y recuperado','Escala fija de −1,2 a +1,2. Señal deseada discontinua sobre la demodulada, sin corregir ganancia ni retardo.','Seguir el mensaje sin dejar pasar todo el ruido','El mensaje recuperado se obtiene de la tensión de control. Se retira el desajuste de continua conocido y se escala por Kᵥ꜀ₒ/Δf. El error incluye retardo, deformación y ruido.','m̂(t) = [Kᵥ꜀ₒ·v꜀(t) − Δf₀] / Δf','Reduce la rapidez del lazo manteniendo el mensaje: observa cómo aumenta el retardo o se deforma la salida. Compara con y sin ruido, y después un lazo ancho con uno estrecho.'],
  frequency:['Seguimiento de frecuencia instantánea','Entrada y VCO, referidos a la frecuencia libre del VCO.','La tensión de control ajusta la frecuencia','En esta gráfica se resta a ambas señales la frecuencia libre del VCO. Si se superponen, el VCO está siguiendo la modulación. Un error de fase constante también permite seguir una frecuencia constante.','fentrada(t) − fVCO,libre = Δf₀ + Δf·m(t)','Sube la desviación y baja fₙ. ¿En qué zonas de la modulación deja de seguir el VCO a la entrada?'],
  loop:['Qué ocurre dentro del lazo','Error de fase, salida del detector y tensión de control.','La no linealidad del detector limita el seguimiento','El detector entrega sin(φₑ). Cerca de cero es aproximadamente lineal; a errores grandes ya no aumenta proporcionalmente y pueden aparecer deslizamientos de ciclo. El filtro PI conserva el ajuste de frecuencia.','Detector: d(t) = sin[φₑ(t) + ruido de fase de entrada]','Compara los tipos 1 y 2 con desajuste de portadora. Observa el error medio de fase y la tensión continua necesaria para compensarlo.']
 };
@@ -32,16 +32,16 @@ function line(x1,y1,x2,y2,color='grid',width=1,dash=[]){ctx.strokeStyle=palette[
 function arrow(x1,y1,x2,y2,color='cyan'){line(x1,y1,x2,y2,color,2);const a=Math.atan2(y2-y1,x2-x1);line(x2,y2,x2-10*Math.cos(a-.4),y2-10*Math.sin(a-.4),color,2);line(x2,y2,x2-10*Math.cos(a+.4),y2-10*Math.sin(a+.4),color,2);}
 function block(x,y,w,title,value,color='cyan'){ctx.fillStyle='#102328';ctx.fillRect(x,y,w,90);ctx.strokeStyle=palette[color];ctx.lineWidth=1.5;ctx.strokeRect(x,y,w,90);text(title,x+w/2,y+32,'text',20,'center');text(value,x+w/2,y+64,color,18,'center');}
 function range(values){let lo=Math.min(...values),hi=Math.max(...values);if(hi-lo<1e-9){lo-=.5;hi+=.5;}const pad=(hi-lo)*.12;return [lo-pad,hi+pad];}
-function plotRow(y,h,title,curves,{symmetric=false}={}){
- const x=110,w=930,values=curves.flatMap(c=>result.samples.map(c.get));let [lo,hi]=range(values);if(symmetric){const a=Math.max(Math.abs(lo),Math.abs(hi),1.2);lo=-a;hi=a;}
+function plotRow(y,h,title,curves,{fixedRange=null}={}){
+ const x=110,w=930,values=curves.flatMap(c=>result.samples.map(c.get));const [lo,hi]=fixedRange || range(values);
  const sy=v=>y+h-(v-lo)/(hi-lo)*h;text(title,x,y-17,'text',20);
  for(let j=0;j<=4;j++){let yy=y+h-j*h/4;line(x,yy,x+w,yy);text((lo+(hi-lo)*j/4).toFixed(hi-lo>20?0:hi-lo>2?1:2),x-12,yy+5,'muted',16,'right');}
  for(let j=0;j<=5;j++){const xx=x+j*w/5;line(xx,y,xx,y+h);text((params.duration*1000*j/5).toFixed(1)+' ms',xx,y+h+26,'muted',16,'center');}
  if(lo<0&&hi>0)line(x,sy(0),x+w,sy(0),'muted',1,[5,5]);
  ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();
- for(const c of curves){ctx.beginPath();result.samples.forEach((s,j)=>{const xx=x+w*s.t/params.duration,yy=sy(c.get(s));j?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);});ctx.strokeStyle=palette[c.color];ctx.lineWidth=2.4;ctx.stroke();}ctx.restore();
+ for(const c of curves){ctx.beginPath();result.samples.forEach((s,j)=>{const xx=x+w*s.t/params.duration,yy=sy(c.get(s));j?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);});ctx.setLineDash(c.dash || []);if(c.halo){ctx.strokeStyle='#071013';ctx.lineWidth=6;ctx.stroke();}ctx.strokeStyle=palette[c.color];ctx.lineWidth=c.width || 2.4;ctx.stroke();}ctx.restore();
 }
-function legend(items,y){let x=110;for(const [label,color] of items){line(x,y-6,x+25,y-6,color,3);text(label,x+34,y,'muted',17);x+=label.length*9+85;}}
+function legend(items,y){let x=110;for(const [label,color,dash=[]] of items){line(x,y-6,x+25,y-6,color,3,dash);text(label,x+34,y,'muted',17);x+=label.length*9+85;}}
 function drawDiagram(){
  text('DEMODULADOR FM · PLL GENÉRICO',60,55,'lime',18);text(`Portadora ${params.carrier.toFixed(0)} MHz · Δf = ±${params.deviation} kHz`,60,103,'text',24);
  block(60,220,180,'Señal FM','f꜀ + Δf·m(t)');block(300,220,180,'Detector','sin(φₑ)');block(540,220,180,'Filtro',params.type==='2'?'PI · tipo 2':'P · tipo 1');block(800,220,200,'VCO',`K = ${params.kvco} kHz/V`,'lime');
@@ -53,10 +53,10 @@ function drawDiagram(){
 }
 function draw(){if(view==='diagram'){drawDiagram();return;}
  if(view==='message'){
-  plotRow(70,295,'Mensaje normalizado',[{get:s=>s.message,color:'muted'},{get:s=>s.recovered,color:'lime'}],{symmetric:true});
-  legend([['Original','muted'],['Recuperado','lime']],420);
+  plotRow(70,295,'Mensaje normalizado',[{get:s=>s.recovered,color:'lime'},{get:s=>s.message,color:'text',dash:[10,7],width:2.8,halo:true}],{fixedRange:[-1.2,1.2]});
+  legend([['Deseada','text',[10,7]],['Demodulada','lime']],420);
   plotRow(485,155,'Error de recuperación: m̂ − m',[{get:s=>s.recovered-s.message,color:'coral'}]);
-  text('Error sin compensar retardo ni ganancia · métricas en la segunda mitad de la ventana',110,712,'muted',17);
+  text('Escala fija del mensaje: los picos fuera de rango se aprecian en la gráfica de error',110,712,'muted',17);
  }else if(view==='frequency'){
   plotRow(70,295,'Desviación respecto al VCO libre (kHz)',[{get:s=>s.input,color:'muted'},{get:s=>s.vco,color:'cyan'}]);legend([['Entrada FM','muted'],['VCO','cyan']],420);
   plotRow(485,155,'Error de seguimiento: fentrada − fVCO (kHz)',[{get:s=>s.input-s.vco,color:'coral'}]);

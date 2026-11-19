@@ -2,7 +2,7 @@
    Noise is circular complex AWGN at Fs=2 MHz, before phase detection. */
 (function(root){
 'use strict';
-const defaults={carrier:100,message:1,deviation:25,offset:0,fn:50,zeta:.707,type:'2',wave:'sine',noise:false,snr:30,kvco:100,phase:0,duration:.003};
+const defaults={carrier:100,message:1,deviation:25,offset:0,fn:50,zeta:.707,type:'2',wave:'sine',noise:true,snr:30,kvco:100,phase:0,duration:.003};
 const sampleRate=2e6;
 function message(p,t){const a=2*Math.PI*p.message*1000*t;return p.wave==='twoTone'?(Math.sin(a)+.4*Math.sin(3*a))/1.4:Math.sin(a);}
 function simulate(p){

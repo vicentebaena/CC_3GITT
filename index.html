@@ -38,7 +38,7 @@
 <label class="control" data-fm-help="zeta"><span>Amortiguamiento ζ <output id="fmZetaOut"></output></span><input id="fmZeta" type="range" min="0.2" max="2" step="0.001" value="0.707"></label>
 <label class="control" data-fm-help="offset"><span>Desajuste portadora − VCO <output id="fmOffsetOut"></output></span><input id="fmOffset" type="range" min="-100" max="100" step="1" value="0"></label>
 <div class="divider">Ruido de entrada</div>
-<label class="control toggle-control" data-fm-help="noise"><span>Añadir ruido AWGN</span><input id="fmNoise" type="checkbox"></label>
+<label class="control toggle-control" data-fm-help="noise"><span>Añadir ruido AWGN</span><input id="fmNoise" type="checkbox" checked></label>
 <label class="control" data-fm-help="snr"><span>SNR <output id="fmSnrOut"></output></span><input id="fmSnr" type="range" min="0" max="60" step="1" value="30"><small>Referida a la banda equivalente de 1 MHz.</small></label>
 <details><summary>Parámetros avanzados</summary><label class="control" data-fm-help="carrier"><span>Portadora (MHz)</span><input id="fmCarrier" type="number" min="1" max="200" step="1" value="100"></label><label class="control" data-fm-help="kvco"><span>Kᵥ꜀ₒ (kHz/V)</span><input id="fmKvco" type="number" min="10" max="1000" step="10" value="100"></label><label class="control" data-fm-help="phase"><span>Error de fase inicial (°)</span><input id="fmPhase" type="number" min="-180" max="180" step="1" value="0"></label></details>
 <button id="fmReset" class="secondary">Restaurar ejemplo</button></aside>
