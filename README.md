@@ -22,7 +22,7 @@ Segunda pestaña de la misma aplicación, accesible también con `#fm`.
 - Mensaje sinusoidal o de dos tonos, frecuencia, desviación de pico, desajuste de portadora y ruido AWGN activado por defecto con SNR de 30 dB.
 - Comparación del mensaje con escala vertical fija de −1,2 a +1,2; señal deseada superpuesta en línea discontinua.
 - Lazo de tipo 1 (proporcional) o tipo 2 (PI), con rapidez y amortiguamiento ajustables.
-- Vistas de diagrama, mensaje original/recuperado, seguimiento de frecuencia e interior del lazo.
+- Tres vistas: diagrama, mensaje original/recuperado con su error, e interior del lazo (fase, detector y tensión de control).
 - Ejemplos: mensaje de 1 kHz; mensaje de 15 kHz con desviación de ±75 kHz; lazo estrecho con pérdida de seguimiento.
 - Ventana temporal fija seleccionable de 1 a 10 ms, independiente de los parámetros del lazo.
 - Error RMS relativo en la segunda mitad de la ventana, sin compensación de ganancia o retardo, y recuento de deslizamientos de ciclo.
