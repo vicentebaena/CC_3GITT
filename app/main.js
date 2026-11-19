@@ -38,7 +38,7 @@ function diagram(){const c=result.c,s=result.samples[cursor];
  text('EJEMPLO ADF4351',50,40,'lime',16);text('Referencia',60,100,'muted',18);text(format(p.ref*1e6),60,130,'text',24);
  block(50,190,130,84,'Cristal',format(p.ref*1e6));block(215,190,110,84,'÷ R',String(p.r));block(360,190,120,84,'PFD','REF − DIV');block(515,190,130,84,'Bomba','UP / DN');block(680,190,130,84,'Filtro PI','Tipo 2');block(850,190,160,84,'VCO',format(s.freq),'lime');
  [[180,215],[325,360],[480,515],[645,680],[810,850]].forEach(([a,b])=>arrow(a,232,b,232));text(format(c.pfd),340,167,'cyan',16,'center');
- line(930,274,930,405,'cyan',2);arrow(930,405,700,405);block(530,365,170,84,'÷ N',c.N.toFixed(4));line(530,405,420,405,'cyan',2);arrow(420,405,420,274);text('Realimentación desde el VCO',780,445,'muted',17,'center');text(format(s.freq/c.N),420,480,'cyan',19,'center');
+ line(930,274,930,405,'cyan',2);arrow(930,405,700,405);block(530,365,170,84,'÷ N',c.N.toFixed(4));line(530,405,420,405,'cyan',2);arrow(420,405,420,274);text('Realimentación desde el VCO',780,330,'muted',17,'center');text(format(s.freq/c.N),420,480,'cyan',19,'center');
  arrow(1010,232,1050,232);line(1050,232,1050,525,'lime',2);arrow(1050,525,920,525,'lime');block(745,485,175,84,'÷ RF',String(p.out),'lime');arrow(745,525,650,525,'lime');text('Salida RF',490,515,'muted',18);text(format(s.freq/p.out),490,550,'lime',26);
  text(`N = ${p.int}${p.mode==='fractional'?` + ${p.frac}/${p.mod}`:''} = ${c.N.toFixed(4)}`,55,555,'text',22);text(`v꜀ = ${s.vc.toFixed(4)} V`,55,595,'amber',20);text('Punto inicial del VCO: '+format(p.initial*1e6),55,635,'muted',18);
 }
