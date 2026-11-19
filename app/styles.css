@@ -4,3 +4,5 @@
 .transport[hidden]{display:none}
 
 .time-window{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:12px 0;color:var(--muted);font-size:.9rem}.time-window select{width:110px}.time-window[hidden]{display:none}
+
+.lab-panel[hidden]{display:none}.lab-tabs{display:flex;flex-shrink:0;gap:6px;padding:6px;border:1px solid var(--line);border-radius:8px;background:#ffffff08}.lab-tabs .tab{white-space:nowrap}.toggle-control{grid-template-columns:1fr auto;align-items:center}.toggle-control input{width:20px;height:20px;accent-color:var(--cyan)}.fm-plot-area{margin:18px 0 8px;width:100%;aspect-ratio:1100/740}.lab-panel .control input:disabled{opacity:.45}.lab-panel .control:has(input:disabled){border-color:#c7e7e211}@media(max-width:900px){.topbar{align-items:flex-start;flex-direction:column}}@media(max-width:760px){.fm-plot-area{height:606px;aspect-ratio:auto;overflow-x:auto;overscroll-behavior-x:contain}}

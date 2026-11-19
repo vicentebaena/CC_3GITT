@@ -15,7 +15,24 @@ Abrir `index.html` en un navegador. No requiere instalación, servidor, conexió
 - Ventana temporal fija de 100 µs por defecto, seleccionable manualmente en Enganche; cambiar f_n o zeta no cambia el eje temporal.
 - Controles de frecuencia natural, amortiguamiento y parámetros didácticos avanzados.
 
-## Modelo y límites
+## Demodulador FM
+
+Segunda pestaña de la misma aplicación, accesible también con `#fm`.
+
+- Mensaje sinusoidal o de dos tonos, frecuencia, desviación de pico, desajuste de portadora y ruido AWGN.
+- Lazo de tipo 1 (proporcional) o tipo 2 (PI), con rapidez y amortiguamiento ajustables.
+- Vistas de diagrama, mensaje original/recuperado, seguimiento de frecuencia e interior del lazo.
+- Ejemplos: mensaje de 1 kHz; mensaje de 15 kHz con desviación de ±75 kHz; lazo estrecho con pérdida de seguimiento.
+- Ventana temporal fija seleccionable de 1 a 10 ms, independiente de los parámetros del lazo.
+- Error RMS relativo en la segunda mitad de la ventana, sin compensación de ganancia o retardo, y recuento de deslizamientos de ciclo.
+
+Modelo genérico promediado con detector senoidal no lineal, no una simulación del ADF4351. Se integran la diferencia de fase y el estado del filtro mediante RK4. El tipo 1 usa Kp = 2πfc, Ki = 0; el tipo 2 usa Kp = 2ζωn, Ki = ωn². El filtro se reajusta para mantener la dinámica al cambiar K_VCO.
+
+El ruido se añade a la envolvente compleja unitaria antes del detector como AWGN circular, a 2 Mmuestras/s. La SNR se refiere a una banda equivalente de 1 MHz. La semilla fija permite comparaciones reproducibles. No se modelan preénfasis, estéreo, filtros RF ni saturación de tensión del VCO. La tensión se representa respecto a su polarización. Para comparar la salida con el mensaje se retira el desajuste de continua conocido y se normaliza por la desviación de pico.
+
+Pruebas: `node tests/fm-model.test.cjs`.
+
+## Modelo y límites del sintetizador
 
 Modelo lineal promediado, de segundo orden y tipo 2, con filtro PI ideal. La simulación integra mediante RK4 el error de fase en el PFD y el estado integral. Se conserva una fase incremental para evitar muestrear la portadora RF. Se reajustan las ganancias del filtro al modificar N, K_VCO, f_n o zeta para conservar la dinámica seleccionada.
 
@@ -34,7 +51,10 @@ Fuente: [hoja de datos ADF4351](https://www.analog.com/media/en/technical-docume
 - `index.html`: interfaz.
 - `app/styles.css`: estilo inspirado en SEC_3GITT.
 - `app/model.js`: modelo independiente de la interfaz.
-- `app/main.js`: gráficos e interacción.
+- `app/main.js`: gráficos e interacción del sintetizador.
+- `app/fm-model.js`: modelo no lineal del demodulador FM.
+- `app/fm-main.js`: controles y gráficos de FM.
+- `app/labs.js`: navegación entre laboratorios.
 - `tests/model.test.cjs`: comprobaciones del modelo (`node tests/model.test.cjs`).
 
 ## GitHub y aplicación publicada
