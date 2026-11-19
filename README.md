@@ -33,6 +33,21 @@ El ruido se añade a la envolvente compleja unitaria antes del detector como AWG
 
 Pruebas: `node tests/fm-model.test.cjs`.
 
+## Recuperación de portadora BPSK: lazo de Costas
+
+Tercera pestaña, accesible también con `#costas`. Incluye diagrama, constelación antes/después, ramas I/Q con decisiones de bits y adquisición de fase/frecuencia. Las escalas de constelación e I/Q son fijas; la referencia deseada se superpone discontinua. La ventana temporal no se adapta a f_n.
+
+- Controles de tasa de símbolos, desfase inicial, desajuste de frecuencia, frecuencia natural, amortiguamiento y AWGN (E_b/N_0 de 30 dB por defecto).
+- Ejemplos de recuperación, ambigüedad de 180 grados y adquisición fallida dentro de una ventana finita.
+- Comparación de primer cuarto, último cuarto o toda la ventana para las constelaciones, con los mismos símbolos antes y después. Los colores indican el signo transmitido, conocido por la simulación.
+- Piloto conocido de 64 símbolos para resolver la polaridad de las decisiones. La BER excluye ese piloto; el control no modifica I/Q ni el oscilador.
+
+Modelo discreto con una actualización por símbolo, filtros de rama y sincronismo de símbolo ideales. I = m cos(phi_e), Q = m sin(phi_e), por lo que el detector I*Q = 0,5 sin(2 phi_e) tiene pendiente 1 alrededor de 0 y de pi. El filtro PI usa Kp = 2 zeta omega_n, Ki = omega_n^2. Estas ganancias describen la aproximación de pequeña señal; la adquisición es no lineal. f_n se limita a R_s/20. La ventana inicial es de 10 ms y puede ajustarse manualmente entre 5 y 50 ms. No se modelan pulsos, filtros adaptados físicos, adquisición de reloj ni electrónica RF.
+
+La entrada compleja tiene amplitud de símbolo unitaria. AWGN circular tiene varianza por componente 1/(2*10^(E_b/N_0/10)), con semilla fija. BPSK transporta un bit por símbolo, E_s = E_b. El piloto se resuelve por el signo de la correlación entre I y los símbolos conocidos; puede fallar si aún no se ha adquirido la portadora o con ruido elevado. No se usa una polaridad elegida por el resultado deseado.
+
+Las métricas de fase y frecuencia usan el último cuarto. El error de fase RMS se calcula módulo 180 grados, por lo que debe interpretarse junto con la BER para identificar inversiones. Las BER son cocientes medidos en esta ventana, no predicciones teóricas; si no hay datos tras los 64 símbolos de piloto, no se informa BER. Pruebas: `node tests/costas-model.test.cjs`.
+
 ## Modelo y límites del sintetizador
 
 Modelo lineal promediado, de segundo orden y tipo 2, con filtro PI ideal. La simulación integra mediante RK4 el error de fase en el PFD y el estado integral. Se conserva una fase incremental para evitar muestrear la portadora RF. Se reajustan las ganancias del filtro al modificar N, K_VCO, f_n o zeta para conservar la dinámica seleccionada.
@@ -55,7 +70,9 @@ Fuente: [hoja de datos ADF4351](https://www.analog.com/media/en/technical-docume
 - `app/main.js`: gráficos e interacción del sintetizador.
 - `app/fm-model.js`: modelo no lineal del demodulador FM.
 - `app/fm-main.js`: controles y gráficos de FM.
-- `app/labs.js`: navegación entre laboratorios.
+- `app/costas-model.js`: modelo discreto del lazo de Costas BPSK.
+- `app/costas-main.js`: controles y gráficos de recuperación de portadora.
+- `app/labs.js`: navegación entre los tres laboratorios.
 - `tests/model.test.cjs`: comprobaciones del modelo (`node tests/model.test.cjs`).
 
 ## GitHub y aplicación publicada
