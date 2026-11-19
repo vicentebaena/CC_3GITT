@@ -1,7 +1,7 @@
 'use strict';
 const $=id=>document.getElementById(id), canvas=$('plot'),ctx=canvas.getContext('2d');
 const colors={text:'#eef8f6',muted:'#a7bbb7',grid:'#c7e7e222',cyan:'#48d6c8',lime:'#c8f560',amber:'#ffc857',coral:'#ff6b5f',blue:'#7cb7ff'};
-let p={...PLL.defaults},result,view='diagram',cursor=1800,playing=false,last=0,timeWindow=0.001;
+let p={...PLL.defaults},result,view='diagram',cursor=1800,playing=false,last=0,timeWindow=0.0001;
 const format=(v,unit='Hz')=>{const a=Math.abs(v);return a>=1e9?(v/1e9).toFixed(4)+' G'+unit:a>=1e6?(v/1e6).toFixed(3)+' M'+unit:a>=1e3?(v/1e3).toFixed(3)+' k'+unit:v.toFixed(1)+' '+unit;};
 const help={
  preset:['Un mismo paso, dos sintetizadores','El ejemplo entero divide 25 MHz por R = 25. El fraccional usa R = 1 y MOD = 25. Ambos generan 2441 MHz con pasos de 1 MHz.'],

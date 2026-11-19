@@ -12,7 +12,7 @@ Abrir `index.html` en un navegador. No requiere instalación, servidor, conexió
 - Referencia inicial de 25 MHz. Salida 2441 MHz: INT = 97, FRAC = 16, MOD = 25, divisor RF = 1.
 - Diagrama del lazo, respuesta temporal, ilustración de pulsos PFD y distribución del ruido de fase.
 - Cambio de canal, reproducción/pausa, avance manual y cursor temporal en la vista PFD.
-- Ventana temporal fija de 1 ms por defecto, seleccionable manualmente en Enganche; cambiar f_n o zeta no cambia el eje temporal.
+- Ventana temporal fija de 100 µs por defecto, seleccionable manualmente en Enganche; cambiar f_n o zeta no cambia el eje temporal.
 - Controles de frecuencia natural, amortiguamiento y parámetros didácticos avanzados.
 
 ## Modelo y límites
