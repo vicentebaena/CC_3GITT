@@ -4,7 +4,11 @@ Aplicación docente para Circuitos de Comunicaciones, Grado en Ingeniería de la
 
 ## Uso
 
-Abrir `index.html` en un navegador. No requiere instalación, servidor, conexión a Internet ni dependencias externas. Interfaz en español, adaptable a escritorio y móvil, con ayuda al pasar el ratón o enfocar controles.
+Abrir `index.html` en un navegador. No requiere instalación, servidor, conexión a Internet ni dependencias externas. Interfaz bilingüe inglés/español, adaptable a escritorio y móvil, con ayuda al pasar el ratón o enfocar controles.
+
+## Idioma
+
+Selector EN/ES arriba a la derecha. Inglés por defecto; la elección se recuerda localmente. Controles, ayudas, advertencias, accesibilidad y textos de las gráficas cambian sin reiniciar los modelos ni alterar parámetros. Las traducciones se incluyen en la app y funcionan sin conexión.
 
 ## Sintetizador ADF4351
 
@@ -73,6 +77,7 @@ Fuente: [hoja de datos ADF4351](https://www.analog.com/media/en/technical-docume
 - `app/costas-model.js`: modelo discreto del lazo de Costas BPSK.
 - `app/costas-main.js`: controles y gráficos de recuperación de portadora.
 - `app/labs.js`: navegación entre los tres laboratorios.
+- `app/i18n.js` y `app/translations.js`: selector y catálogo ES/EN sin servicios externos.
 - `tests/model.test.cjs`: comprobaciones del modelo (`node tests/model.test.cjs`).
 
 ## GitHub y aplicación publicada

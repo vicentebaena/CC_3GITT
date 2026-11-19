@@ -13,5 +13,6 @@ function activate(name){
 }
 function select(name){activate(name);history.replaceState(null,'',labs[name].hash);}
 buttons.forEach((b,index)=>{b.addEventListener('click',()=>select(b.dataset.lab));b.addEventListener('keydown',e=>{let next;if(e.key==='ArrowRight')next=(index+1)%buttons.length;else if(e.key==='ArrowLeft')next=(index+buttons.length-1)%buttons.length;else if(e.key==='Home')next=0;else if(e.key==='End')next=buttons.length-1;else return;e.preventDefault();select(buttons[next].dataset.lab);buttons[next].focus();});});
+window.addEventListener('app-language-change',()=>{window.SynthLab.render();window.FMLab.render();window.CostasLab.render();});
 activate(Object.keys(labs).find(key=>labs[key].hash===location.hash)||'synth');
 })();

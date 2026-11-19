@@ -26,7 +26,7 @@ const descriptions={
  message:['Mensaje original y recuperado','Escala fija de −1,2 a +1,2. Señal deseada discontinua sobre la demodulada, sin corregir ganancia ni retardo.','Seguir el mensaje sin dejar pasar todo el ruido','El mensaje recuperado se obtiene de la tensión de control. Se retira el desajuste de continua conocido y se escala por Kᵥ꜀ₒ/Δf. El error incluye retardo, deformación y ruido.','m̂(t) = [Kᵥ꜀ₒ·v꜀(t) − Δf₀] / Δf','Reduce la rapidez del lazo manteniendo el mensaje: observa cómo aumenta el retardo o se deforma la salida. Compara con y sin ruido, y después un lazo ancho con uno estrecho.'],
  loop:['Qué ocurre dentro del lazo','Error de fase, salida del detector y tensión de control.','La no linealidad del detector limita el seguimiento','El detector entrega sin(φₑ). Cerca de cero es aproximadamente lineal; a errores grandes ya no aumenta proporcionalmente y pueden aparecer deslizamientos de ciclo. El filtro PI conserva el ajuste de frecuencia.','Detector: d(t) = sin[φₑ(t) + ruido de fase de entrada]','Compara los tipos 1 y 2 con desajuste de portadora. Observa el error medio de fase y la tensión continua necesaria para compensarlo.']
 };
-function text(s,x,y,color='text',size=18,align='left'){ctx.fillStyle=palette[color];ctx.font=`${size}px system-ui,sans-serif`;ctx.textAlign=align;ctx.fillText(s,x,y);}
+function text(s,x,y,color='text',size=18,align='left'){ctx.fillStyle=palette[color];ctx.font=`${size}px system-ui,sans-serif`;ctx.textAlign=align;ctx.fillText(window.I18n.t(s),x,y);}
 function line(x1,y1,x2,y2,color='grid',width=1,dash=[]){ctx.strokeStyle=palette[color];ctx.lineWidth=width;ctx.setLineDash(dash);ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.setLineDash([]);}
 function arrow(x1,y1,x2,y2,color='cyan'){line(x1,y1,x2,y2,color,2);const a=Math.atan2(y2-y1,x2-x1);line(x2,y2,x2-10*Math.cos(a-.4),y2-10*Math.sin(a-.4),color,2);line(x2,y2,x2-10*Math.cos(a+.4),y2-10*Math.sin(a+.4),color,2);}
 function block(x,y,w,title,value,color='cyan'){ctx.fillStyle='#102328';ctx.fillRect(x,y,w,90);ctx.strokeStyle=palette[color];ctx.lineWidth=1.5;ctx.strokeRect(x,y,w,90);text(title,x+w/2,y+32,'text',20,'center');text(value,x+w/2,y+64,color,18,'center');}
@@ -40,7 +40,7 @@ function plotRow(y,h,title,curves,{fixedRange=null}={}){
  ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();
  for(const c of curves){ctx.beginPath();result.samples.forEach((s,j)=>{const xx=x+w*s.t/params.duration,yy=sy(c.get(s));j?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);});ctx.setLineDash(c.dash || []);if(c.halo){ctx.strokeStyle='#071013';ctx.lineWidth=6;ctx.stroke();}ctx.strokeStyle=palette[c.color];ctx.lineWidth=c.width || 2.4;ctx.stroke();}ctx.restore();
 }
-function legend(items,y){let x=110;for(const [label,color,dash=[]] of items){line(x,y-6,x+25,y-6,color,3,dash);text(label,x+34,y,'muted',17);x+=label.length*9+85;}}
+function legend(items,y){let x=110;for(const [label,color,dash=[]] of items){line(x,y-6,x+25,y-6,color,3,dash);text(label,x+34,y,'muted',17);x+=window.I18n.t(label).length*9+85;}}
 function drawDiagram(){
  text('DEMODULADOR FM · PLL GENÉRICO',60,55,'lime',18);text(`Portadora ${params.carrier.toFixed(0)} MHz · Δf = ±${params.deviation} kHz`,60,103,'text',24);
  block(60,220,180,'Señal FM','f꜀ + Δf·m(t)');block(300,220,180,'Detector','sin(φₑ)');block(540,220,180,'Filtro',params.type==='2'?'PI · tipo 2':'P · tipo 1');block(800,220,200,'VCO',`K = ${params.kvco} kHz/V`,'lime');

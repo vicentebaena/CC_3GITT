@@ -29,11 +29,11 @@ const views={
 };
 function sync(){for(const key of Object.keys(PLL.defaults)){if($(key))$(key).value=p[key];} $('frac').disabled=$('mod').disabled=p.mode==='integer';$('frac').max=p.mod-1;$('fnOut').textContent=p.fn+' kHz';$('zetaOut').textContent=p.zeta.toFixed(2);$('target').value=(PLL.configuration(p).output/1e6).toFixed(6).replace(/\.?0+$/,'');}
 function recalculate(){result=PLL.simulate(p,{duration:timeWindow});cursor=view==='pfd'?0:1800;playing=false;$('play').textContent='Reproducir salto';sync();render();}
-function text(s,x,y,color='text',size=18,align='left'){ctx.fillStyle=colors[color]||color;ctx.font=`${size}px system-ui, sans-serif`;ctx.textAlign=align;ctx.fillText(s,x,y);}
+function text(s,x,y,color='text',size=18,align='left'){ctx.fillStyle=colors[color]||color;ctx.font=`${size}px system-ui, sans-serif`;ctx.textAlign=align;ctx.fillText(window.I18n.t(s),x,y);}
 function line(x1,y1,x2,y2,color='grid',width=1,dash=[]){ctx.strokeStyle=colors[color]||color;ctx.lineWidth=width;ctx.setLineDash(dash);ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.setLineDash([]);}
 function arrow(x1,y1,x2,y2,color='cyan'){line(x1,y1,x2,y2,color,2);const a=Math.atan2(y2-y1,x2-x1);line(x2,y2,x2-10*Math.cos(a-.4),y2-10*Math.sin(a-.4),color,2);line(x2,y2,x2-10*Math.cos(a+.4),y2-10*Math.sin(a+.4),color,2);}
 function block(x,y,w,h,title,value,color='cyan'){ctx.fillStyle='#102328';ctx.fillRect(x,y,w,h);ctx.strokeStyle=colors[color];ctx.lineWidth=1.5;ctx.strokeRect(x,y,w,h);text(title,x+w/2,y+30,'text',18,'center');text(value,x+w/2,y+59,color,17,'center');}
-function legend(items,y=680){let x=70;items.forEach(([s,c])=>{line(x,y-5,x+24,y-5,c,3);text(s,x+32,y,'muted',16);x+=s.length*8+80;});}
+function legend(items,y=680){let x=70;items.forEach(([s,c])=>{line(x,y-5,x+24,y-5,c,3);text(s,x+32,y,'muted',16);x+=window.I18n.t(s).length*8+80;});}
 function diagram(){const c=result.c,s=result.samples[cursor];
  text('EJEMPLO ADF4351',50,40,'lime',16);text('Referencia',60,100,'muted',18);text(format(p.ref*1e6),60,130,'text',24);
  block(50,190,130,84,'Cristal',format(p.ref*1e6));block(215,190,110,84,'÷ R',String(p.r));block(360,190,120,84,'PFD','REF − DIV');block(515,190,130,84,'Bomba','UP / DN');block(680,190,130,84,'Filtro PI','Tipo 2');block(850,190,160,84,'VCO',format(s.freq),'lime');
