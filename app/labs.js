@@ -5,7 +5,7 @@ const labs={
  synth:{id:'synthLab',hash:'#sintetizador',intro:'Sintetizador de frecuencia · ejemplo ADF4351',render:()=>window.SynthLab.render()},
  fm:{id:'fmLab',hash:'#fm',intro:'Demodulación FM · seguimiento y recuperación del mensaje',render:()=>window.FMLab.render()},
  costas:{id:'costasLab',hash:'#costas',intro:'Recuperación de portadora BPSK · lazo de Costas',render:()=>window.CostasLab.render()},
- clock:{id:'clockLab',hash:'#clock',intro:'Recuperación de reloj BPSK · Gardner',render:()=>window.ClockLab.render()}
+ clock:{id:'clockLab',hash:'#clock',intro:'Recuperación de reloj BPSK · PLL clásico',render:()=>window.ClockLab.render()}
 };
 function activate(name){
  Object.entries(labs).forEach(([key,lab])=>{document.getElementById(lab.id).hidden=key!==name;});

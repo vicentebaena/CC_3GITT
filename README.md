@@ -52,17 +52,19 @@ La entrada compleja tiene amplitud de símbolo unitaria. AWGN circular tiene var
 
 Las métricas de fase y frecuencia usan el último cuarto. El error de fase RMS se calcula módulo 180 grados, por lo que debe interpretarse junto con la BER para identificar inversiones. Las BER son cocientes medidos en esta ventana, no predicciones teóricas; si no hay datos tras los 64 símbolos de piloto, no se informa BER. Pruebas: `node tests/costas-model.test.cjs`.
 
-## Recuperación de reloj BPSK: Gardner
+## Recuperación de reloj BPSK: PLL clásico por transiciones
 
-Cuarta pestaña, también accesible con `#clock`, con los dos idiomas. La portadora se supone recuperada. Ofrece diagrama, ojo con instantes de muestreo, señal filtrada/decisiones y adquisición temporal. La ventana temporal se conserva al modificar los parámetros y las escalas de ojo y muestreo son fijas.
+Cuarta pestaña, también accesible con `#clock`, en español e inglés. La portadora se supone recuperada. Circuito funcional: señal BPSK demodulada → limitador de cero → detector de transiciones → comparador de fase ideal UP/DN → filtro PI → VCO. El VCO realimenta su reloj al comparador; los flancos descendentes muestrean los bits a medio ciclo de los ascendentes usados como referencia.
 
-Controles: tasa de símbolos, desfase temporal en fracciones de T, error del período libre en ppm, roll-off RRC, patrón de bits, frecuencia natural, amortiguamiento y AWGN (E_b/N_0 = 30 dB por defecto). Ejemplos de adquisición, lazo lento con deriva y ausencia de transiciones. El caso constante muestra que BER cero no garantiza recuperación del reloj.
+Vistas: diagrama, ojo con flancos de muestreo, datos/muestras, pulsos del detector y enganche. En Pulsos se comparan datos limitados, reloj del VCO, UP, DN y tensión instantánea. El ojo y el muestreo mantienen escalas verticales fijas; la ventana temporal se conserva al cambiar la dinámica. Controles de tasa, desfase inicial, error del período libre, roll-off, patrón, f_n, zeta, ganancia del VCO y AWGN (E_b/N_0 = 30 dB por defecto).
 
-El transmisor usa RRC de energía unitaria, 8 símbolos de extensión y 16 muestras/símbolo; la recepción aplica el RRC adaptado. Se retiran los retardos de grupo y se añaden símbolos de guarda. El ruido real tiene varianza N_0/2 antes del filtro receptor; tras éste, las muestras de ruido quedan correlacionadas. La cascada finita de filtros aproxima un pulso Nyquist de coseno alzado.
+La fuente utiliza transmisor RRC y receptor RRC adaptado, de 8 símbolos y 16 muestras/símbolo, con pulsos de energía unitaria y ruido real de varianza N_0/2 antes de recepción. Se detectan los cruces por cero observados de ambas polaridades y se aplica un rearme de T/4. No se usan los bits ideales ni sus tiempos para gobernar el PLL.
 
-Gardner usa las muestras en t_(k-1), (t_(k-1)+t_k)/2 y t_k: e_k = y_mid*(y_prev-y_current). Su ganancia se normaliza con la pendiente media del pulso seleccionado. El PI utiliza Kp = 2*zeta*2*pi*f_n/R_s y Ki = (2*pi*f_n/R_s)^2. El error normalizado se limita a +/-1 y el período estimado a [0.98,1.02] T; f_n se limita a R_s/100. La interpolación es lineal. El tiempo ideal y los bits transmitidos se usan sólo para gráficos y métricas, nunca para dirigir el lazo.
+El comparador toma la fase del VCO en cada transición recibida. Para un error firmado e en ciclos, emite un pulso de signo e y duración |e|/f_VCO. Es un comparador ideal por eventos; no se simulan sus compuertas. El filtro integra el área exacta de cada pulso, incluso con anchura inferior al paso temporal. Se resuelve el VCO con 64 pasos por T y se localizan sus flancos por continuidad de fase. La interpolación numérica sólo evalúa la forma de onda y los cruces de la simulación.
 
-Las métricas temporales usan el último cuarto; BER compara la segunda mitad con los índices de bits originales. El ojo se pliega módulo T y no identifica desplazamientos enteros de símbolo. No se simula sincronización de trama ni corrección de polaridad. Las fluctuaciones dependientes de los datos existen incluso sin AWGN. Pruebas: `node tests/clock-model.test.cjs`.
+Para una densidad nominal rho = 0.5 transiciones/bit: Kp = 2*zeta*omega_n/rho, Ki = omega_n^2/rho. Si d(t) es el pulso firmado y x el estado integral, dx/dt = Ki*d, v_c = (Kp*d+x)/K_VCO, f_VCO = f_0 + K_VCO*v_c y d(phi_VCO)/dt = 2*pi*f_VCO. Cambiar K_VCO retoca las ganancias del filtro para conservar f_n y zeta. La densidad real de transiciones altera la dinámica: bits constantes no excitan el detector y el filtro conserva su estado integral.
+
+El modelo limita la frecuencia del VCO a [0.5,1.5] R_s y la corrección integral a +/-0.25 R_s, e informa si alcanza límites. La BER compara los índices de bits originales con muestras tomadas durante la segunda mitad de la ventana; las métricas temporales usan el último cuarto. El ojo se pliega módulo T y no identifica desplazamientos enteros de bit. No se simulan adquisición de portadora, sincronización de trama ni compuertas a nivel de transistor. Pruebas: `node tests/clock-model.test.cjs`.
 
 ## Modelo y límites del sintetizador
 
@@ -88,7 +90,7 @@ Fuente: [hoja de datos ADF4351](https://www.analog.com/media/en/technical-docume
 - `app/fm-main.js`: controles y gráficos de FM.
 - `app/costas-model.js`: modelo discreto del lazo de Costas BPSK.
 - `app/costas-main.js`: controles y gráficos de recuperación de portadora.
-- `app/clock-model.js`: filtros RRC, ruido y recuperación temporal Gardner.
+- `app/clock-model.js`: filtros RRC, detector por transiciones, filtro PI y VCO del PLL clásico.
 - `app/clock-main.js`: controles y gráficos de recuperación de reloj.
 - `app/labs.js`: navegación entre los cuatro laboratorios.
 - `app/i18n.js` y `app/translations.js`: selector y catálogo ES/EN sin servicios externos.
