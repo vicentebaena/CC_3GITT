@@ -2,7 +2,7 @@
 (function(){
 'use strict';
 const byId=id=>document.getElementById(id),canvas=byId('fmPlot'),ctx=canvas.getContext('2d');
-const palette={text:'#eef8f6',muted:'#a7bbb7',grid:'#c7e7e222',cyan:'#48d6c8',lime:'#c8f560',amber:'#ffc857',coral:'#ff6b5f',blue:'#7cb7ff'};
+const palette={text:'#eef8f6',muted:'#a7bbb7',grid:'#c7e7e222',cyan:'#48d6c8',lime:'#c8f560',demodulated:'#31966b',amber:'#ffc857',coral:'#ff6b5f',blue:'#7cb7ff'};
 const ids={carrier:'fmCarrier',message:'fmMessage',deviation:'fmDeviation',offset:'fmOffset',fn:'fmFn',zeta:'fmZeta',type:'fmType',wave:'fmWave',noise:'fmNoise',snr:'fmSnr',kvco:'fmKvco',phase:'fmPhase',duration:'fmDuration'};
 let params={...FM.defaults},result=FM.simulate(params),view='message';
 const help={
@@ -53,8 +53,8 @@ function drawDiagram(){
 }
 function draw(){if(view==='diagram'){drawDiagram();return;}
  if(view==='message'){
-  plotRow(70,295,'Mensaje normalizado',[{get:s=>s.recovered,color:'lime'},{get:s=>s.message,color:'text',dash:[10,7],width:2.8,halo:true}],{fixedRange:[-1.2,1.2]});
-  legend([['Deseada','text',[10,7]],['Demodulada','lime']],420);
+  plotRow(70,295,'Mensaje normalizado',[{get:s=>s.recovered,color:'demodulated'},{get:s=>s.message,color:'text',dash:[10,7],width:2.8,halo:true}],{fixedRange:[-1.2,1.2]});
+  legend([['Deseada','text',[10,7]],['Demodulada','demodulated']],420);
   plotRow(485,155,'Error de recuperación: m̂ − m',[{get:s=>s.recovered-s.message,color:'coral'}]);
   text('Escala fija del mensaje: los picos fuera de rango se aprecian en la gráfica de error',110,712,'muted',17);
  }else if(view==='frequency'){
