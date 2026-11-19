@@ -28,7 +28,7 @@ const views={
  noise:['Cómo reparte el lazo el ruido','Densidad espectral SSB referida a la salida del VCO, antes del divisor RF.','Dos fuentes, dos transferencias','La referencia y el suelo equivalente del PFD/CP pasan por N·H. El ruido del VCO pasa por 1−H. Se consideran fuentes independientes y se suman sus potencias.','Sφ,out = N²|H|² Sφ,ref + |H|² Sφ,PFD/CP + |1−H|² Sφ,VCO','Compara los ejemplos entero y fraccional. Después cambia fₙ: ¿en qué zona del espectro conviene que el lazo corrija el VCO?']
 };
 function sync(){for(const key of Object.keys(PLL.defaults)){if($(key))$(key).value=p[key];} $('frac').disabled=$('mod').disabled=p.mode==='integer';$('frac').max=p.mod-1;$('fnOut').textContent=p.fn+' kHz';$('zetaOut').textContent=p.zeta.toFixed(2);$('target').value=(PLL.configuration(p).output/1e6).toFixed(6).replace(/\.?0+$/,'');}
-function recalculate(){result=PLL.simulate(p);cursor=1800;playing=false;$('play').textContent='Reproducir salto';sync();render();}
+function recalculate(){result=PLL.simulate(p);cursor=view==='pfd'?0:1800;playing=false;$('play').textContent='Reproducir salto';sync();render();}
 function text(s,x,y,color='text',size=18,align='left'){ctx.fillStyle=colors[color]||color;ctx.font=`${size}px system-ui, sans-serif`;ctx.textAlign=align;ctx.fillText(s,x,y);}
 function line(x1,y1,x2,y2,color='grid',width=1,dash=[]){ctx.strokeStyle=colors[color]||color;ctx.lineWidth=width;ctx.setLineDash(dash);ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.setLineDash([]);}
 function arrow(x1,y1,x2,y2,color='cyan'){line(x1,y1,x2,y2,color,2);const a=Math.atan2(y2-y1,x2-x1);line(x2,y2,x2-10*Math.cos(a-.4),y2-10*Math.sin(a-.4),color,2);line(x2,y2,x2-10*Math.cos(a+.4),y2-10*Math.sin(a+.4),color,2);}
@@ -69,7 +69,7 @@ function applyTarget(){if(!$('target').checkValidity())return;const c=PLL.config
 $('target').addEventListener('change',applyTarget);$('applyTarget').addEventListener('click',applyTarget);
 function preset(){p={...PLL.defaults};if($('preset').value==='integer')Object.assign(p,{r:25,mode:'integer',int:2441,frac:0});recalculate();}
 $('preset').addEventListener('change',preset);$('reset').addEventListener('click',preset);
-document.querySelectorAll('[data-view]').forEach(el=>el.addEventListener('click',()=>{view=el.dataset.view;document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b===el);b.setAttribute('aria-pressed',String(b===el));});render();}));
+document.querySelectorAll('[data-view]').forEach(el=>el.addEventListener('click',()=>{view=el.dataset.view;if(view==='pfd'){cursor=0;playing=false;last=0;$('play').textContent='Reproducir salto';}document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b===el);b.setAttribute('aria-pressed',String(b===el));});render();}));
 function explain(el){const h=help[el.closest('[data-help]')?.dataset.help];if(h){$('helpTitle').textContent=h[0];$('helpText').textContent=h[1];}}
 document.addEventListener('mouseover',e=>explain(e.target));document.addEventListener('focusin',e=>explain(e.target));
 $('cursor').addEventListener('input',()=>{playing=false;$('play').textContent='Reproducir salto';cursor=Number($('cursor').value);render();});

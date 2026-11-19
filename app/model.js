@@ -1,7 +1,7 @@
 /* CC 3GITT: averaged, linear type-II PLL. No RF carrier is numerically sampled. */
 (function(root){
 'use strict';
-const defaults={ref:25,r:1,mode:'fractional',int:97,frac:16,mod:25,out:1,initial:2440,fn:20,zeta:.707,kvco:100,phase:0,refNoise:-145,vcoNoise:-90};
+const defaults={ref:25,r:1,mode:'fractional',int:97,frac:16,mod:25,out:1,initial:2440,fn:20,zeta:.707,kvco:100,phase:100,refNoise:-145,vcoNoise:-90};
 function configuration(p){
  const pfd=p.ref*1e6/p.r,N=p.int+(p.mode==='integer'?0:p.frac/p.mod);
  return {pfd,N,vco:pfd*N,output:pfd*N/p.out,step:pfd/(p.mode==='integer'?1:p.mod)/p.out,floor:-220+10*Math.log10(pfd)+20*Math.log10(N)};
