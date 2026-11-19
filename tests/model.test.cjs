@@ -19,3 +19,16 @@ const divided=configuration({...p,out:4});assert.equal(divided.output,c.output/4
 for(const f of [100,1e3,1e4,1e5,1e6,1e7]){const n=noiseAt(p,f);assert.ok(n.total>=n.refOut&&n.total>=n.vcoOut);assert.ok(Number.isFinite(n.total));}
 assert.ok(noiseAt(p,100).vcoOut<noiseAt(p,100).vco-50,'Suppress low-frequency VCO noise');
 console.log('PLL model checks passed: synthesis, type-II convergence, downward step, divider, noise power sum.');
+
+const windowDuration=.001;
+for(const fn of [2,20,100]){
+ const r=simulate({...p,fn},{duration:windowDuration});
+ assert.equal(r.duration,windowDuration);
+ assert.ok(Math.abs(r.samples.at(-1).t-windowDuration)<1e-12);
+ assert.ok(r.samples.every(s=>Number.isFinite(s.freq)));
+}
+const slow=simulate({...p,fn:2},{duration:windowDuration}),fast=simulate({...p,fn:20},{duration:windowDuration});
+assert.ok(slow.settling>fast.settling,'Smaller natural frequency must visibly take longer on a fixed time axis');
+const stiff=simulate({...p,fn:100,zeta:2},{duration:.005});
+assert.ok(stiff.samples.every(s=>Number.isFinite(s.freq)&&Math.abs(s.e)<10),'Long display windows must stay numerically stable');
+console.log('Fixed time window and speed comparison checks passed.');

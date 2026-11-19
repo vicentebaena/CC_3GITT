@@ -2,3 +2,5 @@
 .mobile-hint{display:none}@media(max-width:760px){#plotArea{height:606px;min-height:0;aspect-ratio:auto;overflow-x:auto;overscroll-behavior-x:contain}canvas{width:900px;min-width:900px;height:606px}.mobile-hint{display:block;color:var(--muted);font-size:.85rem;margin:10px 0}}
 
 .transport[hidden]{display:none}
+
+.time-window{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:12px 0;color:var(--muted);font-size:.9rem}.time-window select{width:110px}.time-window[hidden]{display:none}
